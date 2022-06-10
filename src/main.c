@@ -4,13 +4,12 @@
 #include "stdbool.h"
 #include "sys/time.h"
 
-FILE *frog;
-
 #define WHITE_PAIR 1
 #define BLACK_PAIR 2
 
 const int height = 25;
 const int width  = 100;
+
 
 struct timeval curr, prev;
 bool quite = false;
@@ -37,7 +36,7 @@ const figure O[4] = {
 };
 
 const figure J[4] = {
-	{0, 0, 1, 0, 1, 1, 1, 2}, 
+	{0, 0, 1, 0, 1, 1, 1, 2},
 	{0, 1, 0, 2, 1, 1, 2, 1},
 	{1, 0, 1, 1, 1, 2, 2, 2},
 	{0, 1, 1, 1, 2, 1, 2, 0}
@@ -94,7 +93,7 @@ void mvaddfig (int y, int x, figure fig, char ch) {
 	attron (COLOR_PAIR(WHITE_PAIR));
 	for (int i = 0; i < 8; i += 2) {
 		mvaddch (fig[i] + y, fig[i+1]*2+x, ch);
-		mvaddch (fig[i] + y, fig[i+1]*2+x+1, ch);	
+		mvaddch (fig[i] + y, fig[i+1]*2+x+1, ch);
 	}
 	refresh();
 	attron(COLOR_PAIR(BLACK_PAIR));
@@ -131,13 +130,13 @@ figure *genfig () {
 bool checkpos (int y, int x, figure fig) {
 	for (int i = 0; i < 8; i+=2) {
 		char ch = mvinch(fig[i]+y, fig[i+1]*2+x) & A_CHARTEXT;
-		if (ch == '<' || ch == '>' || ch == '!' || ch == 't' || ch == '=' 
+		if (ch == '<' || ch == '>' || ch == '!' || ch == 't' || ch == '='
 			|| ch == '/' || ch == '\\') {
 			return false;
 		}
 
 		ch = mvinch (fig[i], fig[i+1]*2+x+1) & A_CHARTEXT;
-		if (ch == '<' || ch == '>' || ch == '!' || ch == 't' || ch == '=' 
+		if (ch == '<' || ch == '>' || ch == '!' || ch == 't' || ch == '='
 			|| ch == '/' || ch == '\\') {
 			return false;
 		}
@@ -153,10 +152,9 @@ int init () {
 
 	if (!has_colors()) {
 		endwin();
-		fprintf (frog, "Your terminal does not support color\n");
 		return 1;
 	}
-	
+
 	start_color();
 	init_pair (WHITE_PAIR, COLOR_WHITE, COLOR_WHITE);
 	init_pair (BLACK_PAIR, COLOR_WHITE, COLOR_BLACK);
@@ -212,18 +210,9 @@ inline int getpoints (char linecount) {
 	return 0;
 }
 
-inline int getlevel () {
-	while (lines >= level*(level+1)*5 + 10*(level+1))
-		level++;
-	return level;
-}
-
-inline int getinterval () {
-	return 800/(1 + level/10);
-}
 void fixburngen () {
 	mvaddfig (pos.y, pos.x, tetris[rot], 't');
-	
+
 	char linecount = 0;
 	for (int i = 0; i < 8; i += 2) {
 		int y = (tetris[rot])[i] + pos.y;
@@ -253,9 +242,10 @@ void fixburngen () {
 	mvprintw (1, 8, "%d", lines);
 	points += getpoints (linecount);
 	mvprintw (5, 9, "%d", points);
-	level = getlevel();
+	while (lines >= level*(level+1)*5 + 10*(level+1))
+		level++;
 	mvprintw (3, 8, "%d", level);
-	interval = getinterval();
+	interval = 800/(1 + level/8);
 	pos = (vec2) {1, 32};
 	rot = 0;
 	tetris = genfig();
@@ -378,15 +368,11 @@ void run () {
 		refresh();
 		prev = curr;
 	}
-	
+
 }
 
 
 int main () {
-	frog = fopen ("tetris.log", "w");
-	if (!frog)
-		goto _bailout;
-
 	if (init())
 		goto _bailout;
 	refresh();
@@ -399,8 +385,6 @@ int main () {
 	}
 
 _bailout:
-	if (frog)
-		fclose (frog);
 	move (0, 0);
 	nodelay(stdscr, FALSE);
 	curs_set (1);
