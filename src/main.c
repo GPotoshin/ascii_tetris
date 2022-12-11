@@ -193,7 +193,7 @@ int init () {
 	return 0;
 }
 
-inline int getpoints (char linecount) {
+int getpoints (char linecount) {
 	switch (linecount) {
 		case 1:
 			return 40 * (level + 1);
