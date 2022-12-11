@@ -216,14 +216,14 @@ void fixburngen () {
 	char linecount = 0;
 	for (int i = 0; i < 8; i += 2) {
 		int y = (tetris[rot])[i] + pos.y;
-		bool foolline = true;
+		bool compline = true;
 		for (int j = 26; j < 46; j++) {
 			if ((mvinch (y, j) & A_CHARTEXT) != 't') {
-				foolline = false;
+				compline = false;
 				break;
 			}
 		}
-		if (foolline) {
+		if (compline) {
 			lines++;
 			linecount++;
 			for (int j = y; j >= 2; j--) {
@@ -245,7 +245,7 @@ void fixburngen () {
 	while (lines >= level*(level+1)*5 + 10*(level+1))
 		level++;
 	mvprintw (3, 8, "%d", level);
-	interval = 800/(1 + level/8);
+	interval = 800/(1.0 + level/8.0);
 	pos = (vec2) {1, 32};
 	rot = 0;
 	tetris = genfig();
