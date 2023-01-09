@@ -1,5 +1,5 @@
 # ASCII TETRIS GAME
-Download with `git clone https://github.com/GPotoshin/ascii_tetris`
+Download with `git clone https://github.com/GPotoshin/ascii_tetris`.
 Run `make` to compile that project.
 You might need to download `ncurses` library on your machine.
 
