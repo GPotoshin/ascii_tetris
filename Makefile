@@ -13,4 +13,4 @@ bin:
 	mkdir -p bin
 
 bin/tetris: src/main.c
-	$(CC) $(CC_FLAGS) $(LD_FLAGS) -o $@ src/main.c
+	$(CC) $< $(CC_FLAGS) $(LD_FLAGS) -o $@
