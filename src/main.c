@@ -10,6 +10,8 @@
 const int height = 25;
 const int width  = 100;
 
+#define FOLLOWING_X 51
+#define FOLLOWING_Y 3
 
 struct timeval curr, prev;
 bool quite = false;
@@ -78,6 +80,7 @@ const figure I[4] = {
 };
 
 figure *tetris;
+figure *following;
 char rot = 0;
 
 
@@ -144,6 +147,18 @@ bool checkpos (int y, int x, figure fig) {
 	return true;
 }
 
+void showFollowing () {
+	mvaddfig (FOLLOWING_Y, FOLLOWING_X, following[0], ' ');
+}
+
+void removeFollowing () {
+	for (int i = 0; i < 8; i += 2) {
+		mvaddch ((*following)[i]+FOLLOWING_Y, (*following)[i+1]*2+FOLLOWING_X, ' ');
+		mvaddch ((*following)[i]+FOLLOWING_Y, (*following)[i+1]*2+FOLLOWING_X+1, ' ');
+	}
+	refresh();
+}
+
 int init () {
 	initscr();
 	noecho();
@@ -190,6 +205,8 @@ int init () {
 	gettimeofday(&prev, NULL);
 	srand (prev.tv_sec);
 	tetris = genfig();
+	following = genfig();
+	showFollowing();
 	return 0;
 }
 
@@ -248,7 +265,10 @@ void fixburngen () {
 	interval = 800/(1.0 + level/8.0);
 	pos = (vec2) {1, 32};
 	rot = 0;
-	tetris = genfig();
+	tetris = following;
+	removeFollowing();
+	following = genfig();
+	showFollowing();
 	mvaddfig (pos.y, pos.x, tetris[rot], 'c');
 }
 
